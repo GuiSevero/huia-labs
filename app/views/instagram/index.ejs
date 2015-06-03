@@ -1,10 +1,14 @@
-<div id="photos"></div>
+<div id="photos">
+<% for(var i=0; i<photos.length; i++) {%>
+   <img src="<%= photos[i].url %>" class="insta-image">
+<% } %>
+</div>
 
 <script type="text/javascript"> 
   var socket = io.connect('/');
   socket.on('photo', function(data){
       console.log(data);
-      $('#photos').append("<img src='" + data.url + "' ></img>");
+      $('#photos').prepend("<img src='" + data.url + "' class='insta-image' ></img>");
   });
 
   socket.on('test', function(data){
