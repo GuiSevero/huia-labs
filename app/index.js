@@ -15,7 +15,7 @@ app.use(expressLayouts);
 app.use(express.static(config.public_dir));
 app.use(require('./routes.js'));
 
-app.use(require('body-parser'));
+//app.use(require('body-parser'));
 app.use(cookieParser(config.cookie.secret));
 
 module.exports = app;

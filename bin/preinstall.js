@@ -10,8 +10,10 @@ if (fs.existsSync(join(app_dir, 'package.json'))) {
 
     cp.exec("npm install", {
         cwd: app_dir
-    }, function() {
-
+    }, function(err, std_out, std_err) {
+    	console.log(std_err);
+    	console.log(err);
+    	console.log(std_out);
     });
     return;
 }
