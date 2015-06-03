@@ -3,6 +3,7 @@ var express = require('express'),
     config = require('./config'),
     cookieParser = require('cookie-parser'),
     expressLayouts = require('express-ejs-layouts');
+    var bodyParser = require('body-parser');
 
 var app = express();
 
@@ -13,6 +14,7 @@ app.set('layout', 'layouts/index'); // defaults to 'layout'
 app.set("layout extractScripts", true);
 
 app.use(expressLayouts);
+app.use(bodyParser)
 app.use(express.static(config.public_dir));
 app.use(require('./routes.js'));
 
