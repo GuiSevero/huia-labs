@@ -74,7 +74,7 @@ exports.post_subscribe = function(request, response) {
                                     if (err) {
                                         console.log(err);
                                     } else {
-                                        io.sockets.emit('photo', idata);
+                                        global.io.sockets.emit('photo', idata);
                                         console.log(idata);
                                     }
                                 });
