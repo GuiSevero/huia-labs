@@ -91,7 +91,7 @@ exports.post_subscribe = function(request, response) {
 exports.get_index =  function(req, res) {
     Photo.find({}, function(err, documents) {
         if (err) res.send(500);
-        res.render('index', {
+        res.render('instagram/index', {
             photos: documents
         });
     });

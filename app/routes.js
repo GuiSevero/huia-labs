@@ -3,7 +3,7 @@ var router = express.Router()
 var controllers = require('./controllers')
 
 //Home
-router.get('/', controllers.facebook.get_index)
+router.get('/', controllers.instagram.get_index)
 
 //Facebook
 router.get('/facebook/challenge', controllers.facebook.get_challenge)

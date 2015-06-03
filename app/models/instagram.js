@@ -1,6 +1,6 @@
 var mongoose = require("mongoose");
 
-exports.Photo = mongoose.model('Photo', {
+module.exports = mongoose.model('Photo', {
     title: "string",
     url: "string",
     thumb: "string",
