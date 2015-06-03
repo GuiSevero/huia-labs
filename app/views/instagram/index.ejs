@@ -6,4 +6,8 @@
       console.log(data);
       $('#photos').append("<img src='" + data.url + "' ></img>");
   });
+
+  socket.on('test', function(data){
+      console.log(data);
+  });
 </script>

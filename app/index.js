@@ -14,7 +14,7 @@ app.set('layout', 'layouts/index'); // defaults to 'layout'
 app.set("layout extractScripts", true);
 
 app.use(expressLayouts);
-app.use(bodyParser)
+app.use(bodyParser.json());
 app.use(express.static(config.public_dir));
 app.use(require('./routes.js'));
 

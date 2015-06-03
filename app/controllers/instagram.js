@@ -9,6 +9,7 @@ var http = require('http'),
     Instagram = require('instagram-node-lib'),
     Photo = require('../models/instagram'),
     config = require('../config');
+    var io = require('socket.io');
 
 mongoose.connect(process.env.MONGOHQ_URL || config.db.mongo_url);
 
@@ -18,8 +19,8 @@ Instagram.set('callback_url', config.instagram.callback_url);
 
 
 exports.get_subscribe =  function(req, res) {
+     global.io.sockets.emit('test', "test");
     res.send(req.query['hub.challenge']);
-    io.sockets.emit('test', req.query['hub.challenge']);
 };
 
 
@@ -34,7 +35,7 @@ exports.post_subscribe = function(request, response) {
             host: 'api.instagram.com',
             path: '/v1/tags/' + notificationOjb.object_id + '/media/recent' +
                 '?' + querystring.stringify({
-                    client_id: config.instagram.client_id,
+                    client_id: "cd4e38d523a8490e9ddd229644052ba2",
                     count: 1
                 }),
         }, function(res) {
@@ -49,6 +50,7 @@ exports.post_subscribe = function(request, response) {
             // and the first photo of the date must to have a location attribute.
             // If so, the photo is emitted through the websocket
             res.on('end', function() {
+
                 var response = JSON.parse(raw);
                 if (response['data'].length > 0) {
 
@@ -73,6 +75,7 @@ exports.post_subscribe = function(request, response) {
                                         console.log(err);
                                     } else {
                                         io.sockets.emit('photo', idata);
+                                        console.log(idata);
                                     }
                                 });
 

@@ -4,7 +4,9 @@ var http = require('http');
 
 var sv = http.createServer(app);
 var io = require('socket.io').listen(sv);
-io.set('log level', 1);
+io.set('log level', 3);
+global.io = io;
+
 
 sv.listen(config.port, function() {
     console.log("Listening on " + config.port);
