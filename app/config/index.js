@@ -5,7 +5,7 @@ exports.public_dir = resolve(__dirname, '../../public');
 exports.view_dir = resolve(__dirname, '../views');
 
 
-exports.port = process.env.port || local.port;
+exports.port = process.env.PORT || local.port;
 
 exports.facebook = {
     app_id: process.env.FB_APP_ID || local.facebook.app_id,
