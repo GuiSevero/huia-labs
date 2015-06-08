@@ -1,15 +1,15 @@
 {
     "port": 8000,
     "facebook": {
-        "app_id": "1018901551462041",
-        "app_secret": "3bc41fe832bff65de559d639c228bcd9",
+        "client_id": "1018901551462041",
+        "client_secret": "3bc41fe832bff65de559d639c228bcd9",
         "verify_token": "ug1MkWaIUovmx4kcK7vVycJw1yPt3ihi"
 
     },
     "instagram": {
-        "app_id": "cd4e38d523a8490e9ddd229644052ba2",
-        "app_secret": "98ed311f1f9d4e5280303b18646fdbaa",
-        "callback_url": "https://google.com"
+        "client_id": "cd4e38d523a8490e9ddd229644052ba2",
+        "client_secret": "98ed311f1f9d4e5280303b18646fdbaa",
+        "callback_url": "https://google.com"       
     },
     "db":{
     	"mongo_url":"mongodb://heroku:h35Ki71qnCfgNKEYSJ4dt1Kios9NxkMh7orUp6Td2Db4XZAYHJwXjY_u7gttNqxsg3bs0Ac80p1RFEdC7aXhUA@kahana.mongohq.com:10002/app30051564"	

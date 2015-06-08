@@ -1,0 +1,28 @@
+<div id="subscriptions">
+	<% if(status.code != 200) {%>
+		<h3>Error <%= status.code %> - <%= status.message %> </h3>
+		<p> <%= meta.error_type %> - <%= meta.error_message %> </p>
+	<% } %>
+	<table>
+		<th>Object</th><th>Objeto Id</th><th>Aspect</th><th>Callback Url</th><th>Type</th><th>Id</th><th>Options</th>
+		<% for(var i in subscriptions) {%>
+		   <tr>
+		   		<td><%= subscriptions[i].object %></td>
+		   		<td><%= subscriptions[i].object_id %></td>
+		   		<td><%= subscriptions[i].aspect %></td>
+		   		<td><%= subscriptions[i].callback_url %></td>
+		   		<td><%= subscriptions[i].type %></td>
+		   		<td><%= subscriptions[i].id %></td>
+		   		<td>
+		   		<a class="delete-subscription" href="#" data-subscription-id="<%= subscriptions[i].id %>">Delete</a>
+		   		</td>
+		   </tr>
+		<% } %>
+	</table>
+</div>
+
+<script type="text/javascript"> 
+  $('.delete-subscription').click(function(){
+  		alert($(this).data('subscription-id'));
+  });
+</script>

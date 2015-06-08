@@ -1,4 +1,3 @@
-
 var subscriptions = 'https://api.instagram.com/v1/subscriptions?client_secret=91106972724240e8896dff48327c3f83&client_id=a50b4ec7d94e456b8f1c7a1d7943844d'
 
 var http = require('http'),
@@ -9,7 +8,7 @@ var http = require('http'),
     Instagram = require('instagram-node-lib'),
     Photo = require('../models/instagram'),
     config = require('../config');
-    var io = require('socket.io');
+var io = require('socket.io');
 
 mongoose.connect(process.env.MONGOHQ_URL || config.db.mongo_url);
 
@@ -17,9 +16,38 @@ Instagram.set('client_id', config.instagram.client_id);
 Instagram.set('client_secret', config.instagram.client_secret);
 Instagram.set('callback_url', config.instagram.callback_url);
 
+exports.get_subscriptions = function(req, res) {
 
-exports.get_subscribe =  function(req, res) {
-     global.io.sockets.emit('test', "test");
+    var url = config.instagram.api.subscriptions + '?client_id=' + config.instagram.client_id + '&client_secret=' + config.instagram.client_secret;
+
+    https.get(url, function(response) {
+
+        var buffer = '';
+        response.on('data', function(d) {
+            buffer += d;
+        });
+
+        response.on('end', function() {
+
+            var response_body = JSON.parse(buffer);
+
+            res.render('instagram/subscriptions', {
+                status: {
+                    code: response.statusCode,
+                    message: response.statusMessage,
+                },
+                meta: response_body.meta,
+                subscriptions: response.statusCode == 200 ? response_body.data : []
+            });
+        });
+
+    }).on('error', function(e) {
+        res.send(500, e);
+    });
+}
+
+exports.get_subscribe = function(req, res) {
+    global.io.sockets.emit('test', "test");
     res.send(req.query['hub.challenge']);
 };
 
@@ -35,7 +63,7 @@ exports.post_subscribe = function(request, response) {
             host: 'api.instagram.com',
             path: '/v1/tags/' + notificationOjb.object_id + '/media/recent' +
                 '?' + querystring.stringify({
-                    client_id: "cd4e38d523a8490e9ddd229644052ba2",
+                    client_id: config.instagram.client_id,
                     count: 1
                 }),
         }, function(res) {
@@ -91,7 +119,7 @@ exports.post_subscribe = function(request, response) {
     response.send(200);
 };
 
-exports.get_index =  function(req, res) {
+exports.get_index = function(req, res) {
     Photo.find({}, function(err, documents) {
         if (err) res.send(500);
         res.render('instagram/index', {
