@@ -16,5 +16,10 @@
     },
     "cookie":{
         "secret":"EuFJs3oqcu7NYjW7DOvSeGg7CoXkp8BM"
+    },
+    "google":{
+        "maps":{
+            "api_key":"AIzaSyCG5nl0KVUWrI-XKX2e9C3Fh1Df126OgiA"
+        }
     }
 }

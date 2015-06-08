@@ -2,6 +2,7 @@ var subscriptions = 'https://api.instagram.com/v1/subscriptions?client_secret=91
 
 var http = require('http'),
     https = require("https"),
+    request = require("request"),
     mongoose = require("mongoose"),
     querystring = require('querystring'),
     _ = require('underscore'),
@@ -20,29 +21,24 @@ exports.get_subscriptions = function(req, res) {
 
     var url = config.instagram.api.subscriptions + '?client_id=' + config.instagram.client_id + '&client_secret=' + config.instagram.client_secret;
 
-    https.get(url, function(response) {
+    request.get({
+        url: config.instagram.api.subscriptions,
+        json: true,
+        qs: {
+            client_secret: config.instagram.client_secret,
+            client_id: config.instagram.client_id
+        }
+    }, function(error, response, response_body) {
 
-        var buffer = '';
-        response.on('data', function(d) {
-            buffer += d;
+        res.render('instagram/subscriptions', {
+            status: {
+                code: response.statusCode,
+                message: response.statusMessage,
+            },
+            meta: response_body.meta,
+            subscriptions: response.statusCode == 200 ? response_body.data : []
         });
 
-        response.on('end', function() {
-
-            var response_body = JSON.parse(buffer);
-
-            res.render('instagram/subscriptions', {
-                status: {
-                    code: response.statusCode,
-                    message: response.statusMessage,
-                },
-                meta: response_body.meta,
-                subscriptions: response.statusCode == 200 ? response_body.data : []
-            });
-        });
-
-    }).on('error', function(e) {
-        res.send(500, e);
     });
 }
 

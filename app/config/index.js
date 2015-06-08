@@ -28,3 +28,5 @@ exports.db = {
 exports.cookie = {
     secret: process.env.COOKIE_SECRET || local.cookie.secret
 }
+
+exports.google = local.google;
