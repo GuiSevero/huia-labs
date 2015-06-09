@@ -22,6 +22,7 @@
     "mongoose": "~3.8.4",
     "passport": "^0.2.2",
     "passport-local": "^1.0.0",
+    "pluralize": "^1.1.2",
     "request": "^2.57.0",
     "underscore": "~1.5.2"
   }

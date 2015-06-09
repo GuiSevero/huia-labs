@@ -1,4 +1,3 @@
-
 var subscriptions = 'https://api.instagram.com/v1/subscriptions?client_secret=91106972724240e8896dff48327c3f83&client_id=a50b4ec7d94e456b8f1c7a1d7943844d'
 
 var http = require('http'),
@@ -9,7 +8,8 @@ var http = require('http'),
     Instagram = require('instagram-node-lib'),
     Photo = require('../models/instagram'),
     config = require('../config');
-    var io = require('socket.io');
+var io = require('socket.io');
+var pluralize = require('pluralize');
 
 mongoose.connect(process.env.MONGOHQ_URL || config.db.mongo_url);
 
@@ -18,8 +18,8 @@ Instagram.set('client_secret', config.instagram.client_secret);
 Instagram.set('callback_url', config.instagram.callback_url);
 
 
-exports.get_subscribe =  function(req, res) {
-     global.io.sockets.emit('test', "test");
+exports.get_subscribe = function(req, res) {
+    global.io.sockets.emit('test', "test");
     res.send(req.query['hub.challenge']);
 };
 
@@ -33,7 +33,7 @@ exports.post_subscribe = function(request, response) {
 
         https.get({
             host: 'api.instagram.com',
-            path: '/v1/tags/' + notificationOjb.object_id + '/media/recent' +
+            path: '/v1/' + pluralize(notificationOjb.object) + '/' + notificationOjb.object_id + '/media/recent' +
                 '?' + querystring.stringify({
                     client_id: "cd4e38d523a8490e9ddd229644052ba2",
                     count: 1
@@ -56,26 +56,28 @@ exports.post_subscribe = function(request, response) {
 
                     for (i in response.data) {
 
-                        var idata = {
-                            title: response.data[i].caption.text,
+                        var instagram_notif = new Photo({
+                            subscription_id: notificationOjb.subscription_id,
+                            object: notificationOjb.object,
+                            object_id: notificationOjb.object_id,
+                            changed_aspect: notificationOjb.changed_aspect,
+                            time: notificationOjb.time,
                             url: response.data[i].images.standard_resolution.url,
-                            image: response.data[i].images.standard_resolution.url,
-                            thumb: response.data[i].images.thumbnail.url
-                        }
-                        var photo = new Photo(idata);
+                            media: response.data[i]
+                        });
 
                         //Previne duplicatas
                         Photo.find({
-                            url: idata.url
+                            url: response.data[i].images.standard_resolution.url
                         }, function(err, documents) {
                             if (err) res.send(500);
                             if (documents.length == 0) {
-                                photo.save(function(err) {
+                                instagram_notif.save(function(err) {
                                     if (err) {
                                         console.log(err);
                                     } else {
-                                        global.io.sockets.emit('photo', idata);
-                                        console.log(idata);
+                                        global.io.sockets.emit('photo', instagram_notif);
+                                        console.log(instagram_notif);
                                     }
                                 });
 
@@ -91,7 +93,7 @@ exports.post_subscribe = function(request, response) {
     response.send(200);
 };
 
-exports.get_index =  function(req, res) {
+exports.get_index = function(req, res) {
     Photo.find({}, function(err, documents) {
         if (err) res.send(500);
         res.render('instagram/index', {
