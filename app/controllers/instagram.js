@@ -60,7 +60,7 @@ exports.get_subscribe = function(req, res) {
 
 exports.post_subscribe = function(request, response) {
 
-    var log = new Log({date: time(), data: request.body})
+    var log = new Log({data: request.body})
     log.save(function(err){
         if (err) console.log(err);
     })
