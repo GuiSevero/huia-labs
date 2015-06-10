@@ -8,8 +8,9 @@ var http = require('http'),
     _ = require('underscore'),
     Instagram = require('instagram-node-lib'),
     Photo = require('../models/instagram'),
-    config = require('../config');
-var io = require('socket.io');
+    config = require('../config'),
+    io = require('socket.io'),
+    pluralize = require('pluralize');
 
 mongoose.connect(process.env.MONGOHQ_URL || config.db.mongo_url);
 
@@ -57,7 +58,7 @@ exports.post_subscribe = function(request, response) {
 
         https.get({
             host: 'api.instagram.com',
-            path: '/v1/tags/' + notificationOjb.object_id + '/media/recent' +
+            path: '/v1/' + pluralize(notificationOjb.object) + '/' + notificationOjb.object_id + '/media/recent' +
                 '?' + querystring.stringify({
                     client_id: config.instagram.client_id,
                     count: 1
@@ -80,26 +81,28 @@ exports.post_subscribe = function(request, response) {
 
                     for (i in response.data) {
 
-                        var idata = {
-                            title: response.data[i].caption.text,
+                        var instagram_notif = new Photo({
+                            subscription_id: notificationOjb.subscription_id,
+                            object: notificationOjb.object,
+                            object_id: notificationOjb.object_id,
+                            changed_aspect: notificationOjb.changed_aspect,
+                            time: notificationOjb.time,
                             url: response.data[i].images.standard_resolution.url,
-                            image: response.data[i].images.standard_resolution.url,
-                            thumb: response.data[i].images.thumbnail.url
-                        }
-                        var photo = new Photo(idata);
+                            media: response.data[i]
+                        });
 
                         //Previne duplicatas
                         Photo.find({
-                            url: idata.url
+                            url: response.data[i].images.standard_resolution.url
                         }, function(err, documents) {
                             if (err) res.send(500);
                             if (documents.length == 0) {
-                                photo.save(function(err) {
+                                instagram_notif.save(function(err) {
                                     if (err) {
                                         console.log(err);
                                     } else {
-                                        global.io.sockets.emit('photo', idata);
-                                        console.log(idata);
+                                        global.io.sockets.emit('photo', instagram_notif);
+                                        console.log(instagram_notif);
                                     }
                                 });
 

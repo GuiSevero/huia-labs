@@ -4,7 +4,7 @@ var http = require('http');
 
 var sv = http.createServer(app);
 var io = require('socket.io').listen(sv);
-io.set('log level', 3);
+io.set('log level', 1);
 global.io = io;
 
 

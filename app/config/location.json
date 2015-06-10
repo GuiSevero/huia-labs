@@ -1,0 +1,13 @@
+{
+    "meta": {
+        "code": 200
+    },
+    "data": {
+        "object": "geography",
+        "object_id": "12828373",
+        "aspect": "media",
+        "callback_url": "https:\/\/huia-labs.herokuapp.com\/instagram\/subscribe",
+        "type": "subscription",
+        "id": "18550672"
+    }
+}
