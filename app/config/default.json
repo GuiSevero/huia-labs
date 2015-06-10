@@ -9,7 +9,7 @@
     "instagram": {
         "client_id": "cd4e38d523a8490e9ddd229644052ba2",
         "client_secret": "98ed311f1f9d4e5280303b18646fdbaa",
-        "callback_url": "https://google.com"       
+        "callback_url": "http://huia-labs.herokuapp.com/instagram/subscribe"       
     },
     "db":{
     	"mongo_url":"mongodb://heroku:h35Ki71qnCfgNKEYSJ4dt1Kios9NxkMh7orUp6Td2Db4XZAYHJwXjY_u7gttNqxsg3bs0Ac80p1RFEdC7aXhUA@kahana.mongohq.com:10002/app30051564"	

@@ -17,7 +17,13 @@ exports.instagram = {
     client_id: process.env.INSTA_APP_ID || local.instagram.client_id,
     client_secret: process.env.INSTA_APP_SECRET || local.instagram.client_secret,
     api: {
-    	subscriptions: "https://api.instagram.com/v1/subscriptions"
+        url: "https://api.instagram.com/v1/",
+        subscriptions: "https://api.instagram.com/v1/subscriptions",
+        tags: "https://api.instagram.com/v1/tags",
+        locations: "https://api.instagram.com/v1/locations",
+        geographies: "https://api.instagram.com/v1/geographies",
+        users: "https://api.instagram.com/v1/users",
+        callback_url: "http://huia-labs.herokuapp.com/instagram/subscribe"
     }
 };
 

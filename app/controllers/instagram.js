@@ -1,5 +1,3 @@
-var subscriptions = 'https://api.instagram.com/v1/subscriptions?client_secret=91106972724240e8896dff48327c3f83&client_id=a50b4ec7d94e456b8f1c7a1d7943844d'
-
 var http = require('http'),
     https = require("https"),
     request = require("request"),
@@ -10,7 +8,8 @@ var http = require('http'),
     Photo = require('../models/instagram'),
     config = require('../config'),
     io = require('socket.io'),
-    pluralize = require('pluralize');
+    pluralize = require('pluralize'),
+    instagram_api = require('../services/instagram_api');
 
 mongoose.connect(process.env.MONGOHQ_URL || config.db.mongo_url);
 
@@ -20,26 +19,35 @@ Instagram.set('callback_url', config.instagram.callback_url);
 
 exports.get_subscriptions = function(req, res) {
 
-    var url = config.instagram.api.subscriptions + '?client_id=' + config.instagram.client_id + '&client_secret=' + config.instagram.client_secret;
-
-    request.get({
-        url: config.instagram.api.subscriptions,
-        json: true,
-        qs: {
-            client_secret: config.instagram.client_secret,
-            client_id: config.instagram.client_id
-        }
-    }, function(error, response, response_body) {
-
+    instagram_api.get_subscriptions(function(err, httpResp, body) {
         res.render('instagram/subscriptions', {
             status: {
-                code: response.statusCode,
-                message: response.statusMessage,
+                code: httpResp.statusCode,
+                message: httpResp.statusMessage,
             },
-            meta: response_body.meta,
-            subscriptions: response.statusCode == 200 ? response_body.data : []
+            meta: body.meta,
+            subscriptions: httpResp.statusCode == 200 ? body.data : []
         });
+    });
+}
 
+exports.post_subscriptions = function(req, res) {
+
+    instagram_api.post_subscription(req.body, function(error) {
+
+        if (error)
+            return res.send(500, error);
+
+        instagram_api.get_subscriptions(function(err, httpResp, body) {
+            res.render('instagram/subscriptions', {
+                status: {
+                    code: httpResp.statusCode,
+                    message: httpResp.statusMessage,
+                },
+                meta: body.meta,
+                subscriptions: httpResp.statusCode == 200 ? body.data : []
+            });
+        });
     });
 }
 
@@ -119,7 +127,9 @@ exports.post_subscribe = function(request, response) {
 };
 
 exports.get_index = function(req, res) {
-    Photo.find({}, function(err, documents) {
+    Photo.find({
+        "object": "geography"
+    }, function(err, documents) {
         if (err) res.send(500);
         res.render('instagram/index', {
             photos: documents
@@ -137,7 +147,6 @@ exports.get_photos = function(req, res) {
                 image: document.url,
                 src: document.url,
                 url: document.url,
-                thumb: document.thumb
             }
         });
         res.send(output);
