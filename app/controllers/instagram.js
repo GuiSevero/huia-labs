@@ -22,13 +22,7 @@ exports.get_maps = function(req, res) {
 
 
 exports.post_maps = function(req, res) {
-    var log = new Log({
-        data: request.body
-    })
-    log.save(function(err) {
-        if (err) console.log(err);
-    })
-
+    
     // request.body is a JSON already parsed
     request.body.forEach(function(notificationOjb) {
         
