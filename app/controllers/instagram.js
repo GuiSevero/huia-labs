@@ -4,7 +4,6 @@ var http = require('http'),
     mongoose = require("mongoose"),
     querystring = require('querystring'),
     _ = require('underscore'),
-    Instagram = require('instagram-node-lib'),
     Photo = require('../models/instagram'),
     Log = require('../models/log'),
     config = require('../config'),
@@ -14,9 +13,68 @@ var http = require('http'),
 
 mongoose.connect(process.env.MONGOHQ_URL || config.db.mongo_url);
 
-Instagram.set('client_id', config.instagram.client_id);
-Instagram.set('client_secret', config.instagram.client_secret);
-Instagram.set('callback_url', config.instagram.callback_url);
+
+exports.get_maps = function(req, res) {
+    if(req.query['hub.challenge'])
+        return res.send(req.query['hub.challenge']);
+    res.render('instagram/maps');
+}
+
+
+exports.post_maps = function(req, res) {
+    var log = new Log({
+        data: request.body
+    })
+    log.save(function(err) {
+        if (err) console.log(err);
+    })
+
+    // request.body is a JSON already parsed
+    request.body.forEach(function(notificationOjb) {
+        
+
+        https.get({
+            host: 'api.instagram.com',
+            path: '/v1/' + pluralize(notificationOjb.object) + '/' + notificationOjb.object_id + '/media/recent' +
+                '?' + querystring.stringify({
+                    client_id: config.instagram.client_id,
+                    count: 1
+                }),
+        }, function(res) {
+
+            var raw = "";
+
+            res.on('data', function(chunk) {
+                raw += chunk;
+            });
+
+            res.on('end', function() {
+
+                var response = JSON.parse(raw);
+                if (response['data'].length > 0) {
+
+                    for (i in response.data) {
+
+                        var instagram_notif = new Photo({
+                            subscription_id: notificationOjb.subscription_id,
+                            object: notificationOjb.object,
+                            object_id: notificationOjb.object_id,
+                            changed_aspect: notificationOjb.changed_aspect,
+                            time: notificationOjb.time,
+                            url: response.data[i].images.standard_resolution.url,
+                            media: response.data[i]
+                        });
+                        global.io.sockets.emit('photo_map', instagram_notif);
+
+                    } //endfor
+                }
+            });
+
+        });
+    });
+    response.send(200);
+}
+
 
 exports.get_subscriptions = function(req, res) {
 
@@ -60,8 +118,10 @@ exports.get_subscribe = function(req, res) {
 
 exports.post_subscribe = function(request, response) {
 
-    var log = new Log({data: request.body})
-    log.save(function(err){
+    var log = new Log({
+        data: request.body
+    })
+    log.save(function(err) {
         if (err) console.log(err);
     })
 
