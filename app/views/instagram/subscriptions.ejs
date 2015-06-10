@@ -4,17 +4,21 @@
 		<p> <%= meta.error_type %> - <%= meta.error_message %> </p>
 	<% } %>
 	<form id="form" method="POST">
-		<select name="object" class="form-object" required>
-			<option value="tag">Tag</option>
-			<option value="location">Location</option>
+		<label for="object">Oject</label>
+		<select id="object" name="object" class="form-object" required>
 			<option value="geography">Geography</option>
+			<option value="tag">Tag</option>
 		</select>
 		<br />
-		<input type="text" name="object_id" placeholder="object id. eg: hashtag, uid, etc" required><br />
+		<div class="input-object-id">
+			<label for="object_id">Hashtag</label>
+			<input type="text" id="object_id" name="object_id" placeholder="Hashtag"><br />
+		</div>
 		<div class="geography-group">
-			<hr>
 			<div class="geo-inputs">
+				<label for="lat">Latitude</label>
 				<input class="geography-value" id="lat" type="text" name="lat" placeholder="latitude" ><br />
+				<label for="lng">Longitude</label>
 				<input class="geography-value" id="lng" type="text" name="lng" placeholder="longitude" ><br />
 				<label for="geography-value">Raio</label>
 				<input 
@@ -29,11 +33,13 @@
 				<span id="geo-radius">500</span> metros<br />
 			</div>
 			<div id="map-canvas"></div>
-			<hr>
 		</div>
 		<input type="submit">
 	</form>
 
+	<hr>
+
+	<h1> Subscribed Objects </h1>
 	<table>
 		<th>Object</th><th>Objeto Id</th><th>Aspect</th><th>Callback Url</th><th>Type</th><th>Id</th><th>Options</th>
 		<% for(var i in subscriptions) {%>
@@ -53,23 +59,24 @@
 </div>
 
 <script type="text/javascript"> 
+
   $('.delete-subscription').click(function(){
   		alert($(this).data('subscription-id'));
   });
 
   $('#form').submit(function(){
   	console.log($(this).serialize());
-  	return false;
   });
 
+  $('.input-object-id').hide();
   $('.form-object').change(function(){
-  	return;
 
   	if($(".form-object option:selected" ).val() == 'geography'){
   		$('.geography-group').show();
+  		$('.input-object-id').hide();
   	}else{
   		$('.geography-group').hide();
-  		$('.geography-value').val('');
+  		$('.input-object-id').show();
   	}
 
   });
@@ -78,7 +85,7 @@
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCG5nl0KVUWrI-XKX2e9C3Fh1Df126OgiA"></script>
 <script type="text/javascript">
 
-	var marker, circle;
+	var marker, circle, map;
 
 function initialize() {
     var mapOptions = {
@@ -98,7 +105,7 @@ function initialize() {
         draggable: true
     };
 
-    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
     
     // Add the circle for this city to the map.
     circle = new google.maps.Circle($.extend(circleOpt,{
