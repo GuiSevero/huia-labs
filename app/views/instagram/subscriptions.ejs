@@ -13,10 +13,22 @@
 		<input type="text" name="object_id" placeholder="object id. eg: hashtag, uid, etc" required><br />
 		<div class="geography-group">
 			<hr>
-			<input class="geography-value" id="lat" type="text" name="lat" placeholder="latitude" ><br />
-			<input class="geography-value" id="lng" type="text" name="lng" placeholder="longitude" ><br />
-			<input class="geography-value" type="text" name="radius" placeholder="radius"  ><br />
-			
+			<div class="geo-inputs">
+				<input class="geography-value" id="lat" type="text" name="lat" placeholder="latitude" ><br />
+				<input class="geography-value" id="lng" type="text" name="lng" placeholder="longitude" ><br />
+				<label for="geography-value">Raio</label>
+				<input 
+					id="geography-value"
+					class="geography-value"
+					type="range"
+					min="500"
+					max="1500"
+					name="radius"
+					value="500" 
+					placeholder="radius">
+				<span id="geo-radius">500</span> metros<br />
+			</div>
+			<div id="map-canvas"></div>
 			<hr>
 		</div>
 		<input type="submit">
@@ -39,7 +51,7 @@
 		<% } %>
 	</table>
 </div>
-<div id="map-canvas"></div>
+
 <script type="text/javascript"> 
   $('.delete-subscription').click(function(){
   		alert($(this).data('subscription-id'));
@@ -65,27 +77,54 @@
 </script>
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCG5nl0KVUWrI-XKX2e9C3Fh1Df126OgiA"></script>
 <script type="text/javascript">
-      function initialize() {
-        var mapOptions = {
-          center: { lat: -34.397, lng: 150.644},
-          zoom: 8
-        };
-        console.log(mapOptions);
-        var map = new google.maps.Map(document.getElementById('map-canvas'),
-            mapOptions);
 
-        var marker = new google.maps.Marker({
-		    position: map.getCenter(),
-		    map: map
-		  });
+	var marker, circle;
 
-        google.maps.event.addListener(map, 'click', function(e) {
-    		$("#lat").val(e.latLng.A);
-    		$("#lng").val(e.latLng.F);
-    		marker.setCenter(e.latLng);
-  		});
+function initialize() {
+    var mapOptions = {
+        center: {
+            lat: -30.028571002398685,
+            lng: -51.20356857776642
+        },
+        zoom: 15
+    };
 
-      }
+    var circleOpt = {
+        strokeColor: '#FF0000',
+        strokeOpacity: 0.8,
+        strokeWeight: 2,
+        fillColor: '#FF0000',
+        fillOpacity: 0.35,
+        draggable: true
+    };
 
-      google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
+    var map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    
+    // Add the circle for this city to the map.
+    circle = new google.maps.Circle($.extend(circleOpt,{
+    	map:map,
+    	center: map.getCenter(),
+    	radius:  $('#geography-value').val() / Math.PI
+    }));
+
+    google.maps.event.addListener(map, 'click', function(e) {
+        $("#lat").val(e.latLng.A);
+        $("#lng").val(e.latLng.F);
+        circle.setCenter(e.latLng);
+    });
+
+    google.maps.event.addListener(circle, 'drag', function(e) {
+        $("#lat").val(e.latLng.A);
+        $("#lng").val(e.latLng.F);
+        circle.setCenter(e.latLng);
+    });
+
+    $('#geography-value').on('mousemove', function(){
+    	$('#geo-radius').html($(this).val());
+    	circle.setRadius($(this).val()  / (Math.PI));
+    })
+}
+
+google.maps.event.addDomListener(window, 'load', initialize);
+
+</script>
