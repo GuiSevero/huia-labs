@@ -6,6 +6,7 @@ var http = require('http'),
     _ = require('underscore'),
     Instagram = require('instagram-node-lib'),
     Photo = require('../models/instagram'),
+    Log = require('../models/log'),
     config = require('../config'),
     io = require('socket.io'),
     pluralize = require('pluralize'),
@@ -58,6 +59,12 @@ exports.get_subscribe = function(req, res) {
 
 
 exports.post_subscribe = function(request, response) {
+
+    var log = new Log({date: time(), data: request.body})
+    log.save(function(err){
+        if (err) console.log(err);
+    })
+
     // request.body is a JSON already parsed
     request.body.forEach(function(notificationOjb) {
         // Every notification object contains the id of the geography
@@ -127,9 +134,7 @@ exports.post_subscribe = function(request, response) {
 };
 
 exports.get_index = function(req, res) {
-    Photo.find({
-        "object": "geography"
-    }, function(err, documents) {
+    Photo.find({}, function(err, documents) {
         if (err) res.send(500);
         res.render('instagram/index', {
             photos: documents
