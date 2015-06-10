@@ -24,7 +24,7 @@ exports.get_maps = function(req, res) {
 exports.post_maps = function(req, res) {
     
     // request.body is a JSON already parsed
-    request.body.forEach(function(notificationOjb) {
+    req.body.forEach(function(notificationOjb) {
         
 
         https.get({
