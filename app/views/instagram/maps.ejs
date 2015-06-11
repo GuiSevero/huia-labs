@@ -9,9 +9,8 @@
   socket.on('photo_map', function(data){
 
   	if(data.media.location){
-  		var Latlng = new google.maps.LatLng(data.media.location.latitude,data.media.location.longitude);
 		var marker = new google.maps.Marker({
-		  position: LatLng,
+		  position: new google.maps.LatLng(data.media.location.latitude,data.media.location.longitude),
 		  map: map,
 		  icon: data.media.images.thumbnail
 		});
