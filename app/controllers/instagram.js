@@ -66,7 +66,7 @@ exports.post_maps = function(req, res) {
 
         });
     });
-    response.send(200);
+    res.send(200);
 }
 
 
