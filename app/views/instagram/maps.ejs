@@ -1,4 +1,4 @@
-<div id="map-canvas"></div>
+<div id="google-maps-canvas"></div>
 
 <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCG5nl0KVUWrI-XKX2e9C3Fh1Df126OgiA"></script>
 <script type="text/javascript">
@@ -12,7 +12,10 @@
 		var marker = new google.maps.Marker({
 		  position: new google.maps.LatLng(data.media.location.latitude,data.media.location.longitude),
 		  map: map,
-		  icon: data.media.images.thumbnail
+		  icon: new google.maps.Icon({
+        url: data.media.images.thumbnail,
+        size: new google.maps.Size(20,20),  
+      })
 		});
 	}
       console.log(data);
@@ -31,7 +34,7 @@ function initialize() {
         zoom: 4
     };
 
-    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+    map = new google.maps.Map(document.getElementById('google-maps-canvas'), mapOptions);
     
 }
 
