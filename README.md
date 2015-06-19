@@ -1,9 +1,7 @@
-### Eleições Boletim para Pagamento de Prenda W3haus - 2014
+### App em NodeJS de integração com APIs realtime do Facebook e Instagram
 
 ### Autores
-- Guilherme
-- Jean
-- Patrick
+- Guilherme Severo
 
 #### Tecnologias
 - Node
@@ -12,20 +10,3 @@
 - MongoDB
 - Mongoose
 - Websockets (Socket.IO)
-
-### Manual
-
-Para adicionar candidato
-http://eleicoesboletim.herokuapp.com/add
-
-Para ver candidatos
-http://eleicoesboletim.herokuapp.com/
-
-Para votar 
-POST http://eleicoesboletim.herokuapp.com/vote 
-Parametros: numero: numero_do_candidato
-
-
-```javascript
-$.post("http://eleicoesboletim.herokuapp.com/vote", {numero: "<NUMERO_DO_CANDIDATO>"}, callback);
-```
